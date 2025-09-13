@@ -12,96 +12,93 @@ export function SignIn() {
   const [step, setStep] = useState<"signUp" | "signIn">("signIn");
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-heading text-foreground mb-2">
-            Classroom Studio
-          </h1>
-          <p className="text-base font-base text-foreground opacity-80">
-            {step === "signIn" ? "Welcome back to your learning space" : "Join your classroom community"}
-          </p>
-        </div>
-
-        {/* Form Container */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {step === "signIn" ? "Sign In" : "Create Account"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                const formData = new FormData(event.currentTarget);
-                void signIn("password", formData);
-              }}
-              className="space-y-4"
-            >
-              {/* Email Input */}
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  Email Address
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  placeholder="you@school.edu"
-                  type="email"
-                  required
-                />
-              </div>
-
-              {/* Password Input */}
-              <div className="space-y-2">
-                <Label htmlFor="password">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  type="password"
-                  required
-                />
-              </div>
-
-              <input name="flow" type="hidden" value={step} />
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-              >
-                {step === "signIn" ? "Sign In" : "Create Account"}
-              </Button>
-
-              {/* Switch Mode Button */}
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  setStep(step === "signIn" ? "signUp" : "signIn");
-                }}
-                className="w-full"
-              >
-                {step === "signIn" ? "Need an account?" : "Already have an account?"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Footer Message */}
-        <div className="mt-6 text-center">
-          <p className="text-sm font-base text-foreground opacity-60">
-            Empowering education through AI-powered insights
-          </p>
-        </div>
+    <div className="w-full max-w-md bg-white border-4 border-black rounded-lg p-8" style={{ boxShadow: '4px 4px 0px 0px black' }}>
+      {/* Header */}
+      <div className="text-center mb-4">
+        <h2 className="text-4xl font-bold text-black mb-4">
+          Classroom<span className="text-teal-500">Studio</span>
+        </h2>
+        <h3 className="text-2xl font-bold text-black mb-2">
+          Login to your account
+        </h3>
+        <p className="text-gray-600 text-sm">
+          Enter your email below to login to your account
+        </p>
       </div>
+
+      {/* Form */}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          void signIn("password", formData);
+        }}
+        className="space-y-4"
+      >
+        <div>
+          <label className="block text-sm font-medium text-black mb-1">
+            Email
+          </label>
+          <input
+            name="email"
+            placeholder="Enter an email..."
+            type="email"
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-teal-500"
+            required
+          />
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium text-black">
+              Password
+            </label>
+            <a href="#" className="text-sm text-teal-600 hover:underline">
+              Forgot your password?
+            </a>
+          </div>
+          <input
+            name="password"
+            placeholder="Enter a password..."
+            type="password"
+            className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:border-teal-500"
+            required
+          />
+        </div>
+
+        <input name="flow" type="hidden" value={step} />
+
+        <button
+          type="submit"
+          className="w-full bg-teal-500 text-white py-3 rounded-md font-semibold hover:bg-teal-600 transition-colors"
+          style={{ boxShadow: '4px 4px 0px 0px black' }}
+        >
+          Login
+        </button>
+
+        <button
+          type="button"
+          className="w-full bg-white border-2 border-gray-300 text-black py-3 rounded-md font-semibold hover:bg-gray-50 transition-colors"
+          style={{ boxShadow: '4px 4px 0px 0px black' }}
+        >
+          Login with Google
+        </button>
+
+        <div className="text-center mt-6">
+          <span className="text-gray-600 text-sm">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => {
+                setStep(step === "signIn" ? "signUp" : "signIn");
+              }}
+              className="text-teal-600 hover:underline font-semibold"
+            >
+              Sign up
+            </button>
+          </span>
+        </div>
+      </form>
     </div>
   );
 }
