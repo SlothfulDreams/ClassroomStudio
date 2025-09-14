@@ -87,76 +87,74 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-heading text-foreground mb-1">
+          <h1 className="text-2xl font-heading text-gray-900 mb-1">
             Classwork
           </h1>
-          <p className="text-base font-base text-foreground opacity-80">
+          <p className="text-base font-base text-gray-600">
             {isTeacher ? "Manage assignments and track student progress" : "View and submit your assignments"}
           </p>
         </div>
 
-        {isTeacher && <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />}
+        {isTeacher && (
+          <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Categories Sidebar */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-heading text-foreground mb-4">
-                Categories
-              </h3>
-              <div className="space-y-2">
-                {categories.map((category) => (
-                  <button
-                    key={category.name}
-                    onClick={() => setSelectedCategory(category.name)}
-                    className={`w-full flex items-center justify-between p-3 text-left rounded-base border-2 transition-colors ${
-                      selectedCategory === category.name
-                        ? "border-main bg-main/5"
-                        : "border-transparent hover:border-border hover:bg-secondary-background"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <FolderOpen size={16} className="text-foreground opacity-60" />
-                      <span className="text-sm font-base text-foreground">
-                        {category.name}
-                      </span>
-                    </div>
-                    <span className="text-xs font-base text-foreground opacity-60 bg-secondary-background px-2 py-1 rounded-base border border-border">
-                      {category.count}
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <h3 className="text-lg font-heading text-gray-900 mb-4">
+              Categories
+            </h3>
+            <div className="space-y-1">
+              {categories.map((category) => (
+                <button
+                  key={category.name}
+                  onClick={() => setSelectedCategory(category.name)}
+                  className={`w-full flex items-center justify-between p-3 text-left rounded-lg transition-colors ${
+                    selectedCategory === category.name
+                      ? "bg-teal-50 text-teal-700 border border-teal-200"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <FolderOpen size={16} className={selectedCategory === category.name ? "text-teal-600" : "text-gray-500"} />
+                    <span className="text-sm font-base">
+                      {category.name}
                     </span>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  </div>
+                  <span className="text-xs font-base text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                    {category.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Assignments List */}
         <div className="lg:col-span-3">
           {filteredAssignments.length === 0 ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <BookOpen size={48} className="text-foreground opacity-40 mx-auto mb-4" />
-                <h3 className="text-xl font-heading text-foreground mb-2">
-                  {selectedCategory === "All" ? "No assignments yet" : `No ${selectedCategory.toLowerCase()} assignments`}
-                </h3>
-                <p className="text-base font-base text-foreground opacity-80 mb-6">
-                  {isTeacher
-                    ? selectedCategory === "All"
-                      ? "Create your first assignment to get started."
-                      : `No assignments in the ${selectedCategory} category yet.`
-                    : "Your teacher will post assignments here."
-                  }
-                </p>
-                {isTeacher && selectedCategory === "All" && (
-                  <div className="flex justify-center">
-                    <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+              <BookOpen size={48} className="text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-heading text-gray-900 mb-2">
+                {selectedCategory === "All" ? "No assignments yet" : `No ${selectedCategory.toLowerCase()} assignments`}
+              </h3>
+              <p className="text-base font-base text-gray-600 mb-6">
+                {isTeacher
+                  ? selectedCategory === "All"
+                    ? "Create your first assignment to get started."
+                    : `No assignments in the ${selectedCategory} category yet.`
+                  : "Your teacher will post assignments here."
+                }
+              </p>
+              {isTeacher && selectedCategory === "All" && (
+                <div className="flex justify-center">
+                  <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />
+                </div>
+              )}
+            </div>
           ) : (
             <div className="space-y-4">
               {filteredAssignments.map((assignment) => (

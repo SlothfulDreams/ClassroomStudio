@@ -40,7 +40,7 @@ export function Navbar({ className }: NavbarProps) {
 
   return (
     <nav className={cn(
-      "w-full bg-secondary-background border-b-2 border-border shadow-[0_4px_0px_0px] shadow-border",
+      "w-full bg-white border-b border-gray-200",
       className
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,7 +49,7 @@ export function Navbar({ className }: NavbarProps) {
           <div className="flex items-center">
             <button
               onClick={() => router.push("/classrooms")}
-              className="text-2xl font-heading text-foreground hover:text-teal-500 transition-colors"
+              className="text-2xl font-heading text-gray-900 hover:text-teal-600 transition-colors"
             >
               Classroom<span className="text-teal-500">Studio</span>
             </button>
@@ -57,37 +57,35 @@ export function Navbar({ className }: NavbarProps) {
 
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
-            <Button
-              variant="neutral"
-              size="icon"
+            <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={cn(
-                "relative",
-                isDropdownOpen && "translate-x-boxShadowX translate-y-boxShadowY shadow-none"
+                "relative p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1",
+                isDropdownOpen && "bg-gray-100"
               )}
             >
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5 text-gray-700" />
               <ChevronDown className={cn(
-                "h-3 w-3 absolute -bottom-1 -right-1 transition-transform",
+                "h-3 w-3 text-gray-500 transition-transform",
                 isDropdownOpen && "rotate-180"
               )} />
-            </Button>
+            </button>
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-secondary-background border-2 border-border shadow-shadow rounded-base z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
                 <div className="py-2">
                   <button
                     onClick={handleSettings}
-                    className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-background transition-colors gap-2"
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-2"
                   >
                     <Settings className="h-4 w-4" />
                     Settings
                   </button>
-                  <hr className="border-border my-1" />
+                  <hr className="border-gray-200 my-1" />
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-background transition-colors gap-2"
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-2"
                   >
                     <LogOut className="h-4 w-4" />
                     Sign Out

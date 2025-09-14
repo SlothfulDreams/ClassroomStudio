@@ -97,82 +97,80 @@ export function AssignmentCard({ assignment, userRole, onEdit, onView }: Assignm
   const StatusIcon = statusInfo.icon;
 
   return (
-    <Card className={cn(
-      "cursor-pointer hover:translate-x-boxShadowX hover:translate-y-boxShadowY transition-all duration-200",
-      isDraft && "border-dashed"
+    <div className={cn(
+      "bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer",
+      isDraft && "border-dashed border-gray-300"
     )}>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4 flex-1">
+          <div className="w-12 h-12 rounded-lg bg-teal-500 flex items-center justify-center">
+            <FileText size={24} className="text-white" />
+          </div>
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-base bg-main border-2 border-border shadow-shadow flex items-center justify-center">
-                <FileText size={20} className="text-main-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-heading text-foreground">
-                  {assignment.title}
-                </h3>
-                <p className="text-sm font-base text-foreground/70">
-                  {assignment.category} • {assignment.points} points
-                </p>
-              </div>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-lg font-heading text-gray-900">
+                {assignment.title}
+              </h3>
             </div>
-
-            <p className="text-sm font-base text-foreground line-clamp-2 mb-4">
+            <p className="text-sm font-base text-gray-600 mb-1">
+              {assignment.category} • {assignment.points} points
+            </p>
+            <p className="text-sm font-base text-gray-500 line-clamp-1">
               {assignment.description}
             </p>
 
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-4 text-sm mt-2">
               {hasValidDueDate && (
-                <div className="flex items-center gap-1">
-                  <Calendar size={14} className="text-foreground/60" />
-                  <span className={cn(
-                    "font-base",
-                    isOverdue ? "text-red-600" : "text-foreground"
-                  )}>
-                    Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
-                  </span>
-                </div>
+                <span className={cn(
+                  "font-base",
+                  isOverdue ? "text-red-600" : "text-gray-600"
+                )}>
+                  Due in {formatDistanceToNow(new Date(assignment.dueDate))}
+                </span>
               )}
 
-              <div className={cn("flex items-center gap-1", statusInfo.color)}>
-                <StatusIcon size={14} />
-                <span className="font-base">{statusInfo.text}</span>
+              <div className={cn("flex items-center gap-1")}>
+                <span className={cn(
+                  "px-2 py-1 rounded-full text-xs font-base",
+                  assignment.status === "graded" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"
+                )}>
+                  {statusInfo.text}
+                </span>
               </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            {isTeacher ? (
-              <>
-                <Button
-                  variant="neutral"
-                  size="sm"
-                  onClick={() => onView?.(assignment.id)}
-                >
-                  <Eye size={16} />
-                  View
-                </Button>
-                <Button
-                  variant="noShadow"
-                  size="sm"
-                  onClick={() => onEdit?.(assignment.id)}
-                >
-                  <Edit size={16} />
-                  Edit
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                onClick={() => onView?.(assignment.id)}
-              >
-                {assignment.status === "graded" ? "View Results" : "Open"}
-              </Button>
-            )}
-          </div>
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="flex items-center gap-2 ml-4">
+          {isTeacher ? (
+            <>
+              <button
+                className="text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={() => onView?.(assignment.id)}
+                title="View"
+              >
+                <Eye size={16} />
+                <span className="sr-only">View</span>
+              </button>
+              <button
+                className="text-teal-600 hover:text-teal-700 p-2 rounded-lg hover:bg-teal-50 transition-colors"
+                onClick={() => onEdit?.(assignment.id)}
+                title="Edit"
+              >
+                <Edit size={16} />
+                <span className="sr-only">Edit</span>
+              </button>
+            </>
+          ) : (
+            <button
+              className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-base transition-colors"
+              onClick={() => onView?.(assignment.id)}
+            >
+              {assignment.status === "graded" ? "View Results" : "Open"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

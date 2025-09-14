@@ -200,43 +200,36 @@ export function CreateAssignmentModal({
 
   if (!isOpen) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <button
-            onClick={() => setIsOpen(true)}
-            className="flex items-center gap-3 w-full text-left"
-          >
-            <div className="w-10 h-10 rounded-full bg-main flex items-center justify-center">
-              <Plus size={20} className="text-main-foreground" />
-            </div>
-            <div className="flex-1 p-3 rounded-base border-2 border-border bg-secondary-background hover:bg-background transition-colors">
-              <span className="text-base font-base text-foreground opacity-60">
-                Create a new assignment
-              </span>
-            </div>
-          </button>
-        </CardContent>
-      </Card>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+      >
+        <Plus size={20} />
+        Create a new assignment
+      </button>
     );
   }
 
   const StepIcon = steps[currentStep].icon;
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardContent className="p-8">
+    <>
+      {/* Overlay */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-8">
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-base bg-main border-2 border-border shadow-shadow flex items-center justify-center">
-                <StepIcon size={24} className="text-main-foreground" />
+              <div className="w-12 h-12 rounded-lg bg-teal-500 flex items-center justify-center">
+                <StepIcon size={24} className="text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-heading text-foreground">
+                <h3 className="text-xl font-heading text-gray-900">
                   {steps[currentStep].title}
                 </h3>
-                <p className="text-sm font-base text-foreground opacity-60">
+                <p className="text-sm font-base text-gray-600">
                   {steps[currentStep].description}
                 </p>
               </div>
@@ -244,9 +237,9 @@ export function CreateAssignmentModal({
             <button
               type="button"
               onClick={handleCancel}
-              className="p-2 rounded-base hover:bg-secondary-background transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <X size={20} className="text-foreground opacity-60" />
+              <X size={20} className="text-gray-500" />
             </button>
           </div>
 
@@ -262,10 +255,10 @@ export function CreateAssignmentModal({
                   <div
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
                       isCurrent
-                        ? "bg-main border-main text-main-foreground"
+                        ? "bg-teal-500 border-teal-500 text-white"
                         : isPast
-                        ? "bg-main border-main text-main-foreground"
-                        : "bg-background border-border text-foreground opacity-40"
+                        ? "bg-teal-500 border-teal-500 text-white"
+                        : "bg-gray-100 border-gray-300 text-gray-400"
                     }`}
                   >
                     <StepIconComponent size={16} />
@@ -273,7 +266,7 @@ export function CreateAssignmentModal({
                   {index < stepOrder.length - 1 && (
                     <div
                       className={`w-12 h-0.5 ${
-                        isPast ? "bg-main" : "bg-border"
+                        isPast ? "bg-teal-500" : "bg-gray-300"
                       }`}
                     />
                   )}
@@ -287,7 +280,7 @@ export function CreateAssignmentModal({
             {currentStep === "basic" && (
               <>
                 <div>
-                  <label className="block text-sm font-heading text-foreground mb-2">
+                  <label className="block text-sm font-heading text-gray-900 mb-2">
                     Assignment Title *
                   </label>
                   <input
@@ -295,7 +288,7 @@ export function CreateAssignmentModal({
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Enter assignment title..."
-                    className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     disabled={isSubmitting}
                     autoFocus
                     required
@@ -303,14 +296,14 @@ export function CreateAssignmentModal({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-heading text-foreground mb-2">
+                  <label className="block text-sm font-heading text-gray-900 mb-2">
                     Description *
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe what students need to do..."
-                    className="w-full min-h-[100px] p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                    className="w-full min-h-[100px] p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
                     disabled={isSubmitting}
                     required
                   />
@@ -318,13 +311,13 @@ export function CreateAssignmentModal({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-heading text-foreground mb-2">
+                    <label className="block text-sm font-heading text-gray-900 mb-2">
                       Category
                     </label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       disabled={isSubmitting}
                     >
                       <option value="">Select category...</option>
@@ -337,7 +330,7 @@ export function CreateAssignmentModal({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-heading text-foreground mb-2">
+                    <label className="block text-sm font-heading text-gray-900 mb-2">
                       Total Points *
                     </label>
                     <input
@@ -346,7 +339,7 @@ export function CreateAssignmentModal({
                       onChange={(e) => setTotalPoints(parseInt(e.target.value) || 0)}
                       min="1"
                       max="1000"
-                      className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       disabled={isSubmitting}
                       required
                     />
@@ -358,42 +351,42 @@ export function CreateAssignmentModal({
             {currentStep === "details" && (
               <>
                 <div>
-                  <label className="block text-sm font-heading text-foreground mb-2">
+                  <label className="block text-sm font-heading text-gray-900 mb-2">
                     Instructions
                   </label>
                   <textarea
                     value={instructions}
                     onChange={(e) => setInstructions(e.target.value)}
                     placeholder="Detailed instructions for students (optional)..."
-                    className="w-full min-h-[150px] p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                    className="w-full min-h-[150px] p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-heading text-foreground mb-2">
+                    <label className="block text-sm font-heading text-gray-900 mb-2">
                       Due Date <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       disabled={isSubmitting}
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-heading text-foreground mb-2">
+                    <label className="block text-sm font-heading text-gray-900 mb-2">
                       Due Time <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="time"
                       value={dueTime}
                       onChange={(e) => setDueTime(e.target.value)}
-                      className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full p-3 text-base font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       disabled={isSubmitting}
                       required
                     />
@@ -404,10 +397,10 @@ export function CreateAssignmentModal({
 
             {currentStep === "solution" && (
               <div>
-                <h4 className="text-lg font-heading text-foreground mb-4">
+                <h4 className="text-lg font-heading text-gray-900 mb-4">
                   Solution File (Optional)
                 </h4>
-                <p className="text-sm font-base text-foreground opacity-80 mb-4">
+                <p className="text-sm font-base text-gray-600 mb-4">
                   Upload a solution file that will be used for AI comparison with student submissions.
                 </p>
 
@@ -421,7 +414,7 @@ export function CreateAssignmentModal({
                   />
                 ) : (
                   <div>
-                    <p className="text-sm font-heading text-foreground mb-2">Solution File:</p>
+                    <p className="text-sm font-heading text-gray-900 mb-2">Solution File:</p>
                     <FileDisplay
                       fileMetadataId={solutionFileId}
                       showDownload={true}
@@ -437,23 +430,22 @@ export function CreateAssignmentModal({
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-lg font-heading text-foreground">
+                    <h4 className="text-lg font-heading text-gray-900">
                       Grading Rubric (Optional)
                     </h4>
-                    <p className="text-sm font-base text-foreground opacity-80">
+                    <p className="text-sm font-base text-gray-600">
                       Create detailed criteria for grading this assignment.
                     </p>
                   </div>
-                  <Button
+                  <button
                     type="button"
-                    variant="neutral"
-                    size="sm"
                     onClick={addRubricCriteria}
                     disabled={isSubmitting}
+                    className="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm transition-colors"
                   >
                     <Plus size={16} />
                     Add Criteria
-                  </Button>
+                  </button>
                 </div>
 
                 {rubricCriteria.length === 0 ? (
@@ -465,8 +457,7 @@ export function CreateAssignmentModal({
                 ) : (
                   <div className="space-y-4">
                     {rubricCriteria.map((criteria, index) => (
-                      <Card key={index}>
-                        <CardContent className="p-4">
+                      <div key={index} className="bg-gray-50 rounded-lg border border-gray-200 p-4">
                           <div className="flex items-start gap-4">
                             <div className="flex-1 space-y-3">
                               <input
@@ -474,13 +465,13 @@ export function CreateAssignmentModal({
                                 value={criteria.name}
                                 onChange={(e) => updateRubricCriteria(index, "name", e.target.value)}
                                 placeholder="Criteria name (e.g., 'Content Quality')"
-                                className="w-full p-2 text-sm font-base bg-background border border-border rounded-base focus:outline-none focus:ring-1 focus:ring-black"
+                                className="w-full p-2 text-sm font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500"
                               />
                               <textarea
                                 value={criteria.description}
                                 onChange={(e) => updateRubricCriteria(index, "description", e.target.value)}
                                 placeholder="Description of what this criteria evaluates..."
-                                className="w-full min-h-[60px] p-2 text-sm font-base bg-background border border-border rounded-base focus:outline-none focus:ring-1 focus:ring-black resize-none"
+                                className="w-full min-h-[60px] p-2 text-sm font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 resize-none"
                               />
                               <input
                                 type="number"
@@ -489,20 +480,18 @@ export function CreateAssignmentModal({
                                 placeholder="Points"
                                 min="0"
                                 max={totalPoints}
-                                className="w-24 p-2 text-sm font-base bg-background border border-border rounded-base focus:outline-none focus:ring-1 focus:ring-black"
+                                className="w-24 p-2 text-sm font-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500"
                               />
                             </div>
-                            <Button
+                            <button
                               type="button"
-                              variant="neutral"
-                              size="sm"
                               onClick={() => removeRubricCriteria(index)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
                             >
                               <X size={14} />
-                            </Button>
+                            </button>
                           </div>
-                        </CardContent>
-                      </Card>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -511,64 +500,68 @@ export function CreateAssignmentModal({
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t-2 border-border">
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
             <div className="flex items-center gap-3">
               {!isFirstStep && (
-                <Button
+                <button
                   type="button"
-                  variant="neutral"
                   onClick={prevStep}
                   disabled={isSubmitting}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <ArrowLeft size={16} />
                   Back
-                </Button>
+                </button>
               )}
             </div>
 
             <div className="flex items-center gap-3">
-              <Button
+              <button
                 type="button"
-                variant="neutral"
                 onClick={handleCancel}
                 disabled={isSubmitting}
+                className="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 Cancel
-              </Button>
+              </button>
 
               {/* Save as Draft option on any step */}
-              <Button
+              <button
                 type="button"
-                variant="noShadow"
                 onClick={() => handleSubmit(true)}
                 disabled={!title.trim() || totalPoints <= 0 || isSubmitting}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save size={16} />
                 Save as Draft
-              </Button>
+              </button>
 
               {!isLastStep ? (
-                <Button
+                <button
                   type="button"
                   onClick={nextStep}
                   disabled={!canProceed() || isSubmitting}
+                  className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <ArrowRight size={16} />
-                </Button>
+                </button>
               ) : (
-                <Button
+                <button
                   type="submit"
                   disabled={!canProceed() || isSubmitting}
+                  className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={16} />
                   {isSubmitting ? "Creating..." : "Create Assignment"}
-                </Button>
+                </button>
               )}
             </div>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

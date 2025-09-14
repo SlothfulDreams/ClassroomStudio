@@ -63,9 +63,9 @@ export function ClassroomTabs({ classroomId, userRole }: ClassroomTabsProps) {
   const availableTabs = tabs.filter(tab => tab.available);
 
   return (
-    <nav className="border-b-2 border-border bg-background">
+    <nav className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex space-x-8 overflow-x-auto">
+        <div className="flex space-x-0 overflow-x-auto">
           {availableTabs.map((tab) => {
             const isActive = pathname === tab.href;
             const Icon = tab.icon;
@@ -75,10 +75,10 @@ export function ClassroomTabs({ classroomId, userRole }: ClassroomTabsProps) {
                 key={tab.id}
                 href={tab.href}
                 className={cn(
-                  "flex items-center gap-2 py-4 text-sm font-base whitespace-nowrap transition-colors border-b-2 hover:translate-y-1",
+                  "flex items-center gap-2 px-4 py-3 text-sm font-base whitespace-nowrap transition-colors border-b-2",
                   isActive
-                    ? "text-foreground border-main"
-                    : "text-foreground opacity-70 border-transparent hover:opacity-100"
+                    ? "text-teal-600 border-teal-500 bg-white"
+                    : "text-gray-600 border-transparent hover:text-gray-900 hover:border-gray-300"
                 )}
               >
                 <Icon size={16} />
