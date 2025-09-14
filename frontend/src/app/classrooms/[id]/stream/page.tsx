@@ -11,6 +11,7 @@ import { StreamPost } from "@/components/classroom/StreamPost";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Calendar, BookOpen } from "lucide-react";
+import { CreateAnnouncementModal } from "@/components/classroom/CreateAnnouncementModal";
 
 interface StreamPageProps {
   params: Promise<{ id: string }>;
@@ -25,40 +26,22 @@ export default function StreamPage({ params }: StreamPageProps) {
     !isAuthenticated ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
   );
 
-  // Mock data for now - will replace with real queries
-  const announcements = [
-    {
-      id: "1",
-      authorName: "Dr. Sarah Johnson",
-      authorRole: "instructor" as const,
-      content: "Welcome to Advanced Chemistry! Please review the syllabus and lab safety guidelines posted in the Classwork section.",
-      createdAt: Date.now() - 86400000, // 1 day ago
-      attachments: []
-    },
-    {
-      id: "2",
-      authorName: "Dr. Sarah Johnson",
-      authorRole: "instructor" as const,
-      content: "Reminder: Lab Report #1 is due this Friday. Make sure to include all required sections as outlined in the rubric.",
-      createdAt: Date.now() - 172800000, // 2 days ago
-      attachments: []
-    }
-  ];
+  const announcements = useQuery(
+    api.announcements.getAnnouncements,
+    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+  );
 
-  const upcomingAssignments = [
-    {
-      id: "1",
-      title: "Lab Report #1: Chemical Bonding",
-      dueDate: Date.now() + 259200000, // 3 days from now
-      points: 100
-    },
-    {
-      id: "2",
-      title: "Chapter 5 Problem Set",
-      dueDate: Date.now() + 604800000, // 1 week from now
-      points: 50
-    }
-  ];
+  const assignments = useQuery(
+    api.assignments.getAssignments,
+    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+  );
+
+  // Filter upcoming assignments (due in the future) and limit to 5
+  const upcomingAssignments = assignments?.filter(a =>
+    a.isPublished &&
+    a.dueDate &&
+    a.dueDate > Date.now()
+  ).slice(0, 5) || [];
 
   if (!classroom) {
     return <Loading message="Loading stream..." size="lg" showCard />;
@@ -74,24 +57,13 @@ export default function StreamPage({ params }: StreamPageProps) {
         <ClassroomBanner classroom={classroom} />
 
         {/* Create Post (Teachers only) */}
-        {isTeacher && (
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-main flex items-center justify-center">
-                  <Plus size={20} className="text-main-foreground" />
-                </div>
-                <Button variant="neutral" className="flex-1 justify-start">
-                  Share something with your class
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {isTeacher && <CreateAnnouncementModal classroomId={resolvedParams.id as Id<"classrooms">} />}
 
         {/* Stream Posts */}
         <div className="space-y-4">
-          {announcements.length === 0 ? (
+          {!announcements ? (
+            <Loading message="Loading announcements..." size="md" />
+          ) : announcements.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <h3 className="text-lg font-heading text-foreground mb-2">
@@ -106,8 +78,23 @@ export default function StreamPage({ params }: StreamPageProps) {
               </CardContent>
             </Card>
           ) : (
-            announcements.map((post) => (
-              <StreamPost key={post.id} post={post} />
+            announcements.map(announcement => (
+              <StreamPost
+                key={announcement._id}
+                post={{
+                  id: announcement._id,
+                  authorName: announcement.author.name || "Unknown",
+                  authorRole: "instructor", // We'll need to get this from the author data
+                  content: announcement.content,
+                  createdAt: announcement.createdAt,
+                  attachmentIds: announcement.attachmentIds,
+                  commentCount: announcement.commentCount || 0,
+                  isPinned: announcement.isPinned
+                }}
+                classroomId={resolvedParams.id as Id<"classrooms">}
+                currentUserRole={classroom.userRole}
+                canEdit={isTeacher} // For now, only teachers can edit
+              />
             ))
           )}
         </div>
@@ -132,15 +119,15 @@ export default function StreamPage({ params }: StreamPageProps) {
             ) : (
               <div className="space-y-3">
                 {upcomingAssignments.map((assignment) => (
-                  <div key={assignment.id} className="flex items-start gap-3 p-3 rounded-base border border-border hover:bg-secondary-background transition-colors">
+                  <div key={assignment._id} className="flex items-start gap-3 p-3 rounded-base border border-border hover:bg-secondary-background transition-colors">
                     <BookOpen size={16} className="text-foreground opacity-60 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-base text-foreground line-clamp-2">
                         {assignment.title}
                       </p>
                       <p className="text-xs font-base text-foreground opacity-60 mt-1">
-                        Due {new Date(assignment.dueDate).toLocaleDateString()}
-                        {assignment.points && ` • ${assignment.points} points`}
+                        Due {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : "No due date"}
+                        {assignment.totalPoints && ` • ${assignment.totalPoints} points`}
                       </p>
                     </div>
                   </div>

@@ -13,12 +13,16 @@ import {
 import { formatDistanceToNow } from "date-fns";
 
 interface Member {
-  id: string;
-  name: string;
-  email: string;
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  } | null;
   role: "instructor" | "ta" | "student";
+  status: "active" | "pending" | "removed" | "blocked";
   joinedAt: number;
-  lastActivity: number;
+  lastActivityAt?: number;
 }
 
 interface MembersListProps {
@@ -78,13 +82,13 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
 
             return (
               <div
-                key={member.id}
+                key={member._id}
                 className="flex items-center gap-4 p-4 rounded-base border-2 border-border hover:bg-secondary-background transition-colors"
               >
                 {/* Avatar */}
                 <div className="w-12 h-12 rounded-full bg-main border-2 border-border shadow-shadow flex items-center justify-center">
                   <span className="text-sm font-heading text-main-foreground">
-                    {getInitials(member.name)}
+                    {getInitials(member.user?.name || "Unknown")}
                   </span>
                 </div>
 
@@ -92,7 +96,7 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="text-base font-heading text-foreground">
-                      {member.name}
+                      {member.user?.name || "Unknown User"}
                     </h4>
                     <span className={cn(
                       "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-base rounded-base",
@@ -106,15 +110,18 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
                   </div>
 
                   <div className="flex items-center gap-4 text-sm">
-                    {showEmail && (
+                    {showEmail && member.user?.email && (
                       <span className="text-foreground opacity-80 font-base">
-                        {member.email}
+                        {member.user.email}
                       </span>
                     )}
                     <div className="flex items-center gap-1 text-foreground opacity-60">
                       <Clock size={12} />
                       <span className="font-base">
-                        Active {formatDistanceToNow(new Date(member.lastActivity), { addSuffix: true })}
+                        {member.lastActivityAt
+                          ? `Active ${formatDistanceToNow(new Date(member.lastActivityAt), { addSuffix: true })}`
+                          : "Never active"
+                        }
                       </span>
                     </div>
                   </div>

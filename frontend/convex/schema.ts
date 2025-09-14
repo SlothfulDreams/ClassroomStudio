@@ -59,7 +59,7 @@ const schema = defineSchema({
     category: v.optional(v.string()), // homework, quiz, exam, etc.
 
     // Teacher's solution for AI comparison
-    solutionFileId: v.optional(v.id("_storage")),
+    solutionFileId: v.optional(v.id("fileMetadata")),
     rubric: v.optional(v.object({
       criteria: v.array(v.object({
         name: v.string(),
@@ -187,6 +187,45 @@ const schema = defineSchema({
   })
     .index("classroom", ["classroomId", "generatedAt"])
     .index("assignment", ["assignmentId"]),
+
+  // Classroom announcements/posts
+  announcements: defineTable({
+    classroomId: v.id("classrooms"),
+    authorId: v.id("users"),
+    content: v.string(),
+
+    // Optional attachments (file metadata references)
+    attachmentIds: v.optional(v.array(v.id("fileMetadata"))),
+
+    // Pinning and priority
+    isPinned: v.boolean(),
+
+    // Scheduling
+    scheduledFor: v.optional(v.number()), // Future posting
+
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("classroom", ["classroomId", "createdAt"])
+    .index("author", ["authorId", "createdAt"])
+    .index("pinned", ["classroomId", "isPinned", "createdAt"]),
+
+  // Comments on announcements
+  announcementComments: defineTable({
+    announcementId: v.id("announcements"),
+    classroomId: v.id("classrooms"), // Denormalized for permissions
+    authorId: v.id("users"),
+    content: v.string(),
+
+    // Reply threading
+    parentCommentId: v.optional(v.id("announcementComments")),
+
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("announcement", ["announcementId", "createdAt"])
+    .index("author", ["authorId", "createdAt"])
+    .index("replies", ["parentCommentId", "createdAt"]),
 
   // Analytics and reporting
   analyticsReports: defineTable({

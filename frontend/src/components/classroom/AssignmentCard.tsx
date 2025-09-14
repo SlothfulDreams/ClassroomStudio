@@ -29,11 +29,14 @@ interface Assignment {
 interface AssignmentCardProps {
   assignment: Assignment;
   userRole: "instructor" | "ta" | "student";
+  onEdit?: (assignmentId: string) => void;
+  onView?: (assignmentId: string) => void;
 }
 
-export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
+export function AssignmentCard({ assignment, userRole, onEdit, onView }: AssignmentCardProps) {
   const isTeacher = userRole === "instructor" || userRole === "ta";
-  const isOverdue = isAfter(new Date(), new Date(assignment.dueDate));
+  const hasValidDueDate = assignment.dueDate && assignment.dueDate !== 0; // Any valid timestamp
+  const isOverdue = hasValidDueDate ? isAfter(new Date(), new Date(assignment.dueDate)) : false;
   const isDraft = assignment.status === "draft";
 
   const getStatusInfo = () => {
@@ -41,7 +44,7 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
       return {
         icon: Edit,
         text: "Draft",
-        color: "text-foreground opacity-60"
+        color: "text-foreground/60"
       };
     }
 
@@ -57,13 +60,13 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
         return {
           icon: AlertCircle,
           text: `${Math.round(submissionRate)}% submitted`,
-          color: "text-foreground opacity-80"
+          color: "text-foreground"
         };
       } else {
         return {
           icon: Users,
           text: `${assignment.submissionCount}/${assignment.totalStudents} submitted`,
-          color: "text-foreground opacity-80"
+          color: "text-foreground"
         };
       }
     } else {
@@ -84,7 +87,7 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
         return {
           icon: Clock,
           text: "Assigned",
-          color: "text-foreground opacity-80"
+          color: "text-foreground"
         };
       }
     }
@@ -96,7 +99,7 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
   return (
     <Card className={cn(
       "cursor-pointer hover:translate-x-boxShadowX hover:translate-y-boxShadowY transition-all duration-200",
-      isDraft && "opacity-75 border-dashed"
+      isDraft && "border-dashed"
     )}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
@@ -109,26 +112,28 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
                 <h3 className="text-lg font-heading text-foreground">
                   {assignment.title}
                 </h3>
-                <p className="text-sm font-base text-foreground opacity-60">
+                <p className="text-sm font-base text-foreground/70">
                   {assignment.category} • {assignment.points} points
                 </p>
               </div>
             </div>
 
-            <p className="text-sm font-base text-foreground opacity-80 line-clamp-2 mb-4">
+            <p className="text-sm font-base text-foreground line-clamp-2 mb-4">
               {assignment.description}
             </p>
 
             <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <Calendar size={14} className="text-foreground opacity-60" />
-                <span className={cn(
-                  "font-base",
-                  isOverdue ? "text-red-600" : "text-foreground opacity-80"
-                )}>
-                  Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
-                </span>
-              </div>
+              {hasValidDueDate && (
+                <div className="flex items-center gap-1">
+                  <Calendar size={14} className="text-foreground/60" />
+                  <span className={cn(
+                    "font-base",
+                    isOverdue ? "text-red-600" : "text-foreground"
+                  )}>
+                    Due {formatDistanceToNow(new Date(assignment.dueDate), { addSuffix: true })}
+                  </span>
+                </div>
+              )}
 
               <div className={cn("flex items-center gap-1", statusInfo.color)}>
                 <StatusIcon size={14} />
@@ -140,17 +145,28 @@ export function AssignmentCard({ assignment, userRole }: AssignmentCardProps) {
           <div className="flex items-center gap-2">
             {isTeacher ? (
               <>
-                <Button variant="neutral" size="sm">
+                <Button
+                  variant="neutral"
+                  size="sm"
+                  onClick={() => onView?.(assignment.id)}
+                >
                   <Eye size={16} />
                   View
                 </Button>
-                <Button variant="noShadow" size="sm">
+                <Button
+                  variant="noShadow"
+                  size="sm"
+                  onClick={() => onEdit?.(assignment.id)}
+                >
                   <Edit size={16} />
                   Edit
                 </Button>
               </>
             ) : (
-              <Button size="sm">
+              <Button
+                size="sm"
+                onClick={() => onView?.(assignment.id)}
+              >
                 {assignment.status === "graded" ? "View Results" : "Open"}
               </Button>
             )}

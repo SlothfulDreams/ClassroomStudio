@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function SignIn() {
   const { signIn } = useAuthActions();
-  const [step, setStep] = useState<"signUp" | "signIn">("signIn");
+  const [flow, setFlow] = useState<"signUp" | "signIn">("signIn");
 
   return (
     <div className="w-full max-w-md bg-white border-4 border-black rounded-lg p-8" style={{ boxShadow: '4px 4px 0px 0px black' }}>
@@ -19,10 +19,12 @@ export function SignIn() {
           Classroom<span className="text-teal-500">Studio</span>
         </h2>
         <h3 className="text-2xl font-bold text-black mb-2">
-          Login to your account
+          {flow === "signIn" ? "Login to your account" : "Create your account"}
         </h3>
         <p className="text-gray-600 text-sm">
-          Enter your email below to login to your account
+          {flow === "signIn"
+            ? "Enter your email below to login to your account"
+            : "Enter your details below to create your account"}
         </p>
       </div>
 
@@ -66,35 +68,27 @@ export function SignIn() {
           />
         </div>
 
-        <input name="flow" type="hidden" value={step} />
+        <input name="flow" type="hidden" value={flow} />
 
         <button
           type="submit"
           className="w-full bg-teal-500 text-white py-3 rounded-md font-semibold hover:bg-teal-600 transition-colors"
           style={{ boxShadow: '4px 4px 0px 0px black' }}
         >
-          Login
-        </button>
-
-        <button
-          type="button"
-          className="w-full bg-white border-2 border-gray-300 text-black py-3 rounded-md font-semibold hover:bg-gray-50 transition-colors"
-          style={{ boxShadow: '4px 4px 0px 0px black' }}
-        >
-          Login with Google
+          {flow === "signIn" ? "Login" : "Sign Up"}
         </button>
 
         <div className="text-center mt-6">
           <span className="text-gray-600 text-sm">
-            Don't have an account?{" "}
+            {flow === "signIn" ? "Don't have an account? " : "Already have an account? "}
             <button
               type="button"
               onClick={() => {
-                setStep(step === "signIn" ? "signUp" : "signIn");
+                setFlow(flow === "signIn" ? "signUp" : "signIn");
               }}
               className="text-teal-600 hover:underline font-semibold"
             >
-              Sign up
+              {flow === "signIn" ? "Sign up" : "Sign in"}
             </button>
           </span>
         </div>

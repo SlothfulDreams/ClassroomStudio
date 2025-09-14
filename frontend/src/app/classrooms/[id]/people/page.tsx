@@ -24,62 +24,29 @@ export default function PeoplePage({ params }: PeoplePageProps) {
     !isAuthenticated ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
   );
 
-  // Mock members data - will replace with real queries
-  const mockMembers = [
-    // Instructors
-    {
-      id: "1",
-      name: "Dr. Sarah Johnson",
-      email: "sarah.johnson@university.edu",
-      role: "instructor" as const,
-      joinedAt: Date.now() - 2592000000, // 30 days ago
-      lastActivity: Date.now() - 86400000 // 1 day ago
-    },
-    // Teaching Assistants
-    {
-      id: "2",
-      name: "Michael Chen",
-      email: "m.chen@university.edu",
-      role: "ta" as const,
-      joinedAt: Date.now() - 2592000000,
-      lastActivity: Date.now() - 172800000 // 2 days ago
-    },
-    // Students
-    {
-      id: "3",
-      name: "Emma Wilson",
-      email: "emma.wilson@student.edu",
-      role: "student" as const,
-      joinedAt: Date.now() - 2419200000, // 28 days ago
-      lastActivity: Date.now() - 3600000 // 1 hour ago
-    },
-    {
-      id: "4",
-      name: "James Rodriguez",
-      email: "james.r@student.edu",
-      role: "student" as const,
-      joinedAt: Date.now() - 2419200000,
-      lastActivity: Date.now() - 7200000 // 2 hours ago
-    },
-    {
-      id: "5",
-      name: "Sophia Kim",
-      email: "sophia.kim@student.edu",
-      role: "student" as const,
-      joinedAt: Date.now() - 2332800000, // 27 days ago
-      lastActivity: Date.now() - 14400000 // 4 hours ago
-    }
-  ];
+  const members = useQuery(
+    api.members.getClassroomMembers,
+    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+  );
+
+  const memberStats = useQuery(
+    api.members.getMemberStats,
+    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+  );
 
   if (!classroom) {
     return <Loading message="Loading people..." size="lg" showCard />;
   }
 
+  if (!members) {
+    return <Loading message="Loading members..." size="lg" showCard />;
+  }
+
   const isTeacher = classroom.userRole === "instructor" || classroom.userRole === "ta";
 
-  const instructors = mockMembers.filter(m => m.role === "instructor");
-  const teachingAssistants = mockMembers.filter(m => m.role === "ta");
-  const students = mockMembers.filter(m => m.role === "student");
+  const instructors = members.filter(m => m.role === "instructor");
+  const teachingAssistants = members.filter(m => m.role === "ta");
+  const students = members.filter(m => m.role === "student");
 
   return (
     <div className="space-y-6">
@@ -118,7 +85,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
               </div>
               <div>
                 <p className="text-2xl font-heading text-foreground">
-                  {mockMembers.length}
+                  {members.length}
                 </p>
                 <p className="text-sm font-base text-foreground opacity-80">
                   Total Members
