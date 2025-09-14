@@ -1,5 +1,6 @@
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import { AuthNavbarWrapper } from "@/components/ui/auth-navbar-wrapper";
 import "./globals.css";
 
 export default function RootLayout({
@@ -11,7 +12,11 @@ export default function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html lang="en">
         <body>
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            <AuthNavbarWrapper>
+              {children}
+            </AuthNavbarWrapper>
+          </ConvexClientProvider>
         </body>
       </html>
     </ConvexAuthNextjsServerProvider>
