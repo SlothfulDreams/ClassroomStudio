@@ -37,7 +37,7 @@ export default function ClassroomLayout({ children, params }: ClassroomLayoutPro
 
   if (classroom === null) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-heading text-foreground mb-4">
             Classroom Not Found
@@ -55,7 +55,7 @@ export default function ClassroomLayout({ children, params }: ClassroomLayoutPro
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <ClassroomHeader classroom={classroom} />
       <ClassroomTabs classroomId={resolvedParams.id} userRole={classroom.userRole} />
       <main className="max-w-7xl mx-auto px-6 py-8">
