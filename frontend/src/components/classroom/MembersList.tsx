@@ -1,10 +1,8 @@
 import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   MoreVertical,
-  Mail,
+  MessageCircle,
   UserMinus,
   Shield,
   User,
@@ -47,11 +45,22 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
   const getRoleColor = (role: string) => {
     switch (role) {
       case "instructor":
-        return "bg-main text-main-foreground";
+        return "bg-teal-500 text-white";
       case "ta":
-        return "bg-secondary-background text-foreground border-2 border-border";
+        return "bg-purple-500 text-white";
       default:
-        return "bg-background text-foreground border-2 border-border";
+        return "bg-gray-200 text-gray-800";
+    }
+  };
+
+  const getRoleName = (role: string) => {
+    switch (role) {
+      case "instructor":
+        return "Principal";
+      case "ta":
+        return "TA";
+      default:
+        return "Student";
     }
   };
 
@@ -69,25 +78,25 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{title} ({members.length})</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6 pt-0">
-        <div className="space-y-3">
+    <div className="bg-white rounded-lg border border-gray-200">
+      <div className="p-4 border-b border-gray-200">
+        <h3 className="text-lg font-heading text-gray-900">
+          {title} ({members.length})
+        </h3>
+      </div>
+      <div className="p-4">
+        <div className="space-y-4">
           {members.map((member) => {
             const RoleIcon = getRoleIcon(member.role);
 
             return (
               <div
                 key={member._id}
-                className="flex items-center gap-4 p-4 rounded-base border-2 border-border hover:bg-secondary-background transition-colors"
+                className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 {/* Avatar */}
-                <div className="w-12 h-12 rounded-full bg-main border-2 border-border shadow-shadow flex items-center justify-center">
-                  <span className="text-sm font-heading text-main-foreground">
+                <div className="w-12 h-12 rounded-full bg-teal-500 flex items-center justify-center">
+                  <span className="text-sm font-heading text-white">
                     {getInitials(member.user?.name || "Unknown")}
                   </span>
                 </div>
@@ -95,60 +104,45 @@ export function MembersList({ title, members, canManage, showEmail }: MembersLis
                 {/* Member Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-base font-heading text-foreground">
+                    <h4 className="text-base font-heading text-gray-900">
                       {member.user?.name || "Unknown User"}
                     </h4>
                     <span className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-base rounded-base",
+                      "inline-flex items-center px-2 py-1 text-xs font-base rounded-md",
                       getRoleColor(member.role)
                     )}>
-                      <RoleIcon size={12} />
-                      {member.role === "instructor" ? "Instructor"
-                       : member.role === "ta" ? "TA"
-                       : "Student"}
+                      {getRoleName(member.role)}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="space-y-1">
                     {showEmail && member.user?.email && (
-                      <span className="text-foreground opacity-80 font-base">
+                      <p className="text-sm text-gray-600 font-base">
                         {member.user.email}
-                      </span>
+                      </p>
                     )}
-                    <div className="flex items-center gap-1 text-foreground opacity-60">
-                      <Clock size={12} />
-                      <span className="font-base">
-                        {member.lastActivityAt
-                          ? `Active ${formatDistanceToNow(new Date(member.lastActivityAt), { addSuffix: true })}`
-                          : "Never active"
-                        }
-                      </span>
-                    </div>
+                    <p className="text-xs text-gray-500 font-base">
+                      {member.lastActivityAt
+                        ? `Active ${formatDistanceToNow(new Date(member.lastActivityAt), { addSuffix: true })}`
+                        : "Never active"
+                      }
+                    </p>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
                   {showEmail && (
-                    <Button variant="neutral" size="sm">
-                      <Mail size={14} />
-                    </Button>
-                  )}
-
-                  {canManage && member.role !== "instructor" && (
-                    <div className="relative">
-                      <Button variant="neutral" size="sm">
-                        <MoreVertical size={14} />
-                      </Button>
-                      {/* Dropdown menu would go here */}
-                    </div>
+                    <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                      <MessageCircle size={16} />
+                    </button>
                   )}
                 </div>
               </div>
             );
           })}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

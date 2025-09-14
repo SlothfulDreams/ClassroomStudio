@@ -6,11 +6,8 @@ import { useConvexAuth } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { Loading } from "@/components/ui/loading";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Save, Archive, Trash2, Settings } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Save, Archive, Trash2, Info, BookOpen, BarChart3, AlertTriangle } from "lucide-react";
 
 interface SettingsPageProps {
   params: Promise<{ id: string }>;
@@ -34,16 +31,14 @@ export default function SettingsPage({ params }: SettingsPageProps) {
   if (!isTeacher) {
     return (
       <div className="text-center py-12">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="p-8">
-            <h2 className="text-xl font-heading text-foreground mb-4">
-              Access Restricted
-            </h2>
-            <p className="text-base font-base text-foreground opacity-80">
-              Only instructors and teaching assistants can access classroom settings.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-lg border border-gray-200 max-w-md mx-auto p-8">
+          <h2 className="text-xl font-heading text-gray-900 mb-4">
+            Access Restricted
+          </h2>
+          <p className="text-base font-base text-gray-600">
+            Only instructors and teaching assistants can access classroom settings.
+          </p>
+        </div>
       </div>
     );
   }
@@ -53,198 +48,220 @@ export default function SettingsPage({ params }: SettingsPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-heading text-foreground mb-1">
+          <h1 className="text-2xl font-heading text-gray-900 mb-1">
             Settings
           </h1>
-          <p className="text-base font-base text-foreground opacity-80">
+          <p className="text-base font-base text-gray-600">
             Manage classroom settings and preferences
           </p>
         </div>
 
-        <Button size="lg">
+        <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
           <Save size={20} />
           Save Changes
-        </Button>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Basic Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings size={20} />
-              Basic Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
+              <Info size={24} className="text-white" />
+            </div>
+            <h3 className="text-lg font-heading text-gray-900">Basic Information</h3>
+          </div>
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="className">Classroom Name</Label>
-              <Input
-                id="className"
+              <label className="block text-sm font-base text-gray-700 mb-1">Classroom Name</label>
+              <input
+                type="text"
                 defaultValue={classroom.name}
                 placeholder="Enter classroom name"
+                className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
-
             <div>
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
+              <label className="block text-sm font-base text-gray-700 mb-1">Subject</label>
+              <input
+                type="text"
                 defaultValue={classroom.subject || ""}
                 placeholder="Enter subject"
+                className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
-
             <div>
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
+              <label className="block text-sm font-base text-gray-700 mb-1">Description</label>
+              <textarea
                 defaultValue={classroom.description || ""}
                 placeholder="Enter classroom description"
+                rows={3}
+                className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
               />
             </div>
-
             <div>
-              <Label htmlFor="joinCode">Join Code</Label>
+              <label className="block text-sm font-base text-gray-700 mb-1">Join Code</label>
               <div className="flex items-center gap-2">
-                <Input
-                  id="joinCode"
+                <input
+                  type="text"
                   value={classroom.joinCode}
                   readOnly
-                  className="font-mono"
+                  className="flex-1 p-3 bg-gray-100 border border-gray-300 rounded-lg font-mono text-gray-900"
                 />
-                <Button variant="neutral" size="sm">
+                <button className="bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 px-3 py-3 rounded-lg transition-colors whitespace-nowrap">
                   Generate New
-                </Button>
+                </button>
               </div>
-              <p className="text-xs font-base text-foreground opacity-60 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Students use this code to join your classroom
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Classroom Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Classroom Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+              <BookOpen size={24} className="text-white" />
+            </div>
+            <h3 className="text-lg font-heading text-gray-900">Classroom Settings</h3>
+          </div>
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base font-heading text-foreground">Allow Late Submissions</h4>
-                <p className="text-sm font-base text-foreground opacity-80">
+                <h4 className="text-base font-base text-gray-900">Allow Late Submissions</h4>
+                <p className="text-sm text-gray-600">
                   Students can submit assignments after the due date
                 </p>
               </div>
-              <Button variant="neutral" size="sm">
-                Enabled
-              </Button>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
-
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base font-heading text-foreground">Auto-Release Grades</h4>
-                <p className="text-sm font-base text-foreground opacity-80">
+                <h4 className="text-base font-base text-gray-900">Auto-Release Grades</h4>
+                <p className="text-sm text-gray-600">
                   Automatically release grades to students when graded
                 </p>
               </div>
-              <Button variant="neutral" size="sm">
-                Disabled
-              </Button>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
-
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base font-heading text-foreground">Require Join Approval</h4>
-                <p className="text-sm font-base text-foreground opacity-80">
+                <h4 className="text-base font-base text-gray-900">Require Join Approval</h4>
+                <p className="text-sm text-gray-600">
                   New students need approval before joining
                 </p>
               </div>
-              <Button variant="neutral" size="sm">
-                Disabled
-              </Button>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
-
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base font-heading text-foreground">Email Notifications</h4>
-                <p className="text-sm font-base text-foreground opacity-80">
+                <h4 className="text-base font-base text-gray-900">Email Notifications</h4>
+                <p className="text-sm text-gray-600">
                   Send notifications for new submissions and activity
                 </p>
               </div>
-              <Button variant="neutral" size="sm">
-                Enabled
-              </Button>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Grading Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Grading</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+              <BarChart3 size={24} className="text-white" />
+            </div>
+            <h3 className="text-lg font-heading text-gray-900">Grading</h3>
+          </div>
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="gradingScale">Grading Scale</Label>
-              <select className="w-full h-10 px-3 py-2 text-sm font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black">
+              <label className="block text-sm font-base text-gray-700 mb-1">Grading Scale</label>
+              <select className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900">
                 <option>Standard (A, B, C, D, F)</option>
                 <option>Percentage (0-100%)</option>
                 <option>Points Based</option>
                 <option>Pass/Fail</option>
               </select>
             </div>
-
             <div>
-              <Label htmlFor="latePenalty">Late Penalty (%)</Label>
-              <Input
-                id="latePenalty"
+              <label className="block text-sm font-base text-gray-700 mb-1">Late Penalty (%)</label>
+              <input
                 type="number"
                 defaultValue="10"
                 min="0"
                 max="100"
+                className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               />
-              <p className="text-xs font-base text-foreground opacity-60 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Percentage deducted per day late
               </p>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <label className="block text-sm font-base text-gray-700 mb-1">Default Points</label>
+              <input
+                type="number"
+                defaultValue="100"
+                min="1"
+                className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Default points for new assignments
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Danger Zone */}
-        <Card className="border-red-200">
-          <CardHeader>
-            <CardTitle className="text-red-600">Danger Zone</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border-2 border-red-200 rounded-base bg-red-50">
-              <div>
-                <h4 className="text-base font-heading text-red-600">Archive Classroom</h4>
-                <p className="text-sm font-base text-red-600 opacity-80">
-                  Hide this classroom from active view
-                </p>
-              </div>
-              <Button variant="neutral" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-                <Archive size={16} />
-                Archive
-              </Button>
+        <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
+              <AlertTriangle size={24} className="text-white" />
             </div>
-
-            <div className="flex items-center justify-between p-4 border-2 border-red-300 rounded-base bg-red-100">
-              <div>
-                <h4 className="text-base font-heading text-red-700">Delete Classroom</h4>
-                <p className="text-sm font-base text-red-700 opacity-80">
-                  Permanently delete this classroom and all its data
-                </p>
+            <h3 className="text-lg font-heading text-gray-900">Danger Zone</h3>
+          </div>
+          <div className="space-y-4">
+            <div className="border border-red-200 rounded-lg p-4 bg-red-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-base font-base text-red-700">Archive Classroom</h4>
+                  <p className="text-sm text-red-600">
+                    Hide this classroom from active view
+                  </p>
+                </div>
+                <button className="bg-white border border-red-300 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors">
+                  Archive
+                </button>
               </div>
-              <Button variant="neutral" size="sm" className="border-red-300 text-red-700 hover:bg-red-100">
-                <Trash2 size={16} />
-                Delete
-              </Button>
             </div>
-          </CardContent>
-        </Card>
+            <div className="border border-red-300 rounded-lg p-4 bg-red-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-base font-base text-red-700">Delete Classroom</h4>
+                  <p className="text-sm text-red-600">
+                    Permanently delete this classroom and all its data
+                  </p>
+                </div>
+                <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

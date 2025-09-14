@@ -9,7 +9,7 @@ import { Loading } from "@/components/ui/loading";
 import { MembersList } from "@/components/classroom/MembersList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Mail, Users } from "lucide-react";
+import { UserPlus, Mail, Users, GraduationCap, Shield, UserCheck } from "lucide-react";
 
 interface PeoplePageProps {
   params: Promise<{ id: string }>;
@@ -53,77 +53,82 @@ export default function PeoplePage({ params }: PeoplePageProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-heading text-foreground mb-1">
+          <h1 className="text-2xl font-heading text-gray-900 mb-1">
             People
           </h1>
-          <p className="text-base font-base text-foreground opacity-80">
+          <p className="text-base font-base text-gray-600">
             Manage classroom members and their roles
           </p>
         </div>
 
         {isTeacher && (
           <div className="flex items-center gap-3">
-            <Button variant="neutral" size="lg">
+            <button className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
               <Mail size={20} />
               Email All
-            </Button>
-            <Button size="lg">
+            </button>
+            <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
               <UserPlus size={20} />
               Invite People
-            </Button>
+            </button>
           </div>
         )}
       </div>
 
       {/* Class Statistics */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-base bg-main border-2 border-border shadow-shadow flex items-center justify-center">
-                <Users size={24} className="text-main-foreground" />
-              </div>
-              <div>
-                <p className="text-2xl font-heading text-foreground">
-                  {members.length}
-                </p>
-                <p className="text-sm font-base text-foreground opacity-80">
-                  Total Members
-                </p>
-              </div>
-            </div>
-
-            <div className="h-10 w-px bg-border" />
-
-            <div className="grid grid-cols-3 gap-6 text-center">
-              <div>
-                <p className="text-lg font-heading text-foreground">
-                  {instructors.length}
-                </p>
-                <p className="text-xs font-base text-foreground opacity-60">
-                  Instructors
-                </p>
-              </div>
-              <div>
-                <p className="text-lg font-heading text-foreground">
-                  {teachingAssistants.length}
-                </p>
-                <p className="text-xs font-base text-foreground opacity-60">
-                  Teaching Assistants
-                </p>
-              </div>
-              <div>
-                <p className="text-lg font-heading text-foreground">
-                  {students.length}
-                </p>
-                <p className="text-xs font-base text-foreground opacity-60">
-                  Students
-                </p>
-              </div>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Members */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
+          <div className="w-16 h-16 bg-teal-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Users size={32} className="text-white" />
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-2xl font-heading text-gray-900 mb-1">
+            {members.length}
+          </p>
+          <p className="text-sm font-base text-gray-600">
+            Total Members
+          </p>
+        </div>
+
+        {/* Instructors */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
+          <div className="w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <GraduationCap size={32} className="text-white" />
+          </div>
+          <p className="text-2xl font-heading text-gray-900 mb-1">
+            {instructors.length}
+          </p>
+          <p className="text-sm font-base text-gray-600">
+            Instructors
+          </p>
+        </div>
+
+        {/* Teaching Assistants */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
+          <div className="w-16 h-16 bg-purple-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Shield size={32} className="text-white" />
+          </div>
+          <p className="text-2xl font-heading text-gray-900 mb-1">
+            {teachingAssistants.length}
+          </p>
+          <p className="text-sm font-base text-gray-600">
+            Teaching Assistants
+          </p>
+        </div>
+
+        {/* Students */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
+          <div className="w-16 h-16 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <UserCheck size={32} className="text-white" />
+          </div>
+          <p className="text-2xl font-heading text-gray-900 mb-1">
+            {students.length}
+          </p>
+          <p className="text-sm font-base text-gray-600">
+            Students
+          </p>
+        </div>
+      </div>
 
       {/* Members Sections */}
       <div className="space-y-6">
