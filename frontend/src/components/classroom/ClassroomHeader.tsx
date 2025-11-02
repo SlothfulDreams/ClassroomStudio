@@ -18,14 +18,15 @@ interface ClassroomHeaderProps {
   className?: string;
 }
 
-export function ClassroomHeader({ classroom, className }: ClassroomHeaderProps) {
-  const isTeacher = classroom.userRole === "instructor" || classroom.userRole === "ta";
+export function ClassroomHeader({
+  classroom,
+  className,
+}: ClassroomHeaderProps) {
+  const isTeacher =
+    classroom.userRole === "instructor" || classroom.userRole === "ta";
 
   return (
-    <header className={cn(
-      "bg-teal-100",
-      className
-    )}>
+    <header className={cn("bg-teal-100", className)}>
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
@@ -51,12 +52,20 @@ export function ClassroomHeader({ classroom, className }: ClassroomHeaderProps) 
 
           <div className="flex items-center gap-3">
             {isTeacher && (
-              <Button variant="outline" size="sm" className="bg-white border-gray-300 hover:bg-gray-50">
+              <Button
+                variant="neutral"
+                size="sm"
+                className="bg-white border-gray-300 hover:bg-gray-50"
+              >
                 <Settings size={16} />
                 Settings
               </Button>
             )}
-            <Button variant="outline" size="sm" className="bg-white border-gray-300 hover:bg-gray-50">
+            <Button
+              variant="neutral"
+              size="sm"
+              className="bg-white border-gray-300 hover:bg-gray-50"
+            >
               <Users size={16} />
               {classroom.memberCount} members
             </Button>
@@ -66,9 +75,11 @@ export function ClassroomHeader({ classroom, className }: ClassroomHeaderProps) 
         {/* Role badge */}
         <div className="mt-4">
           <span className="inline-flex items-center px-3 py-1 text-sm font-base rounded-md bg-teal-500 text-white">
-            {classroom.userRole === "instructor" ? "Instructor"
-             : classroom.userRole === "ta" ? "Teaching Assistant"
-             : "Student"}
+            {classroom.userRole === "instructor"
+              ? "Instructor"
+              : classroom.userRole === "ta"
+                ? "Teaching Assistant"
+                : "Student"}
           </span>
         </div>
       </div>

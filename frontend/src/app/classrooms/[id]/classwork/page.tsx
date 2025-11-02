@@ -23,38 +23,49 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
   const { isAuthenticated } = useConvexAuth();
   const resolvedParams = use(params);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [editingAssignmentId, setEditingAssignmentId] = useState<string | null>(null);
+  const [editingAssignmentId, setEditingAssignmentId] = useState<string | null>(
+    null,
+  );
 
   const classroom = useQuery(
     api.classrooms.getClassroom,
-    !isAuthenticated ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   const assignments = useQuery(
     api.assignments.getAssignments,
-    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated || !classroom
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   const memberStats = useQuery(
     api.members.getMemberStats,
-    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated || !classroom
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   // Calculate categories dynamically from assignments
-  const allCategories = assignments ? [...new Set(assignments.filter(a => a.category).map(a => a.category))] : [];
+  const allCategories = assignments
+    ? [...new Set(assignments.filter((a) => a.category).map((a) => a.category))]
+    : [];
   const categories = [
     { name: "All", count: assignments?.length || 0 },
-    ...allCategories.map(category => ({
+    ...allCategories.map((category) => ({
       name: category,
-      count: assignments?.filter(a => a.category === category).length || 0
-    }))
+      count: assignments?.filter((a) => a.category === category).length || 0,
+    })),
   ];
 
   // Filter assignments by selected category
-  const filteredAssignments = assignments?.filter(assignment => {
-    if (selectedCategory === "All") return true;
-    return assignment.category === selectedCategory;
-  }) || [];
+  const filteredAssignments =
+    assignments?.filter((assignment) => {
+      if (selectedCategory === "All") return true;
+      return assignment.category === selectedCategory;
+    }) || [];
 
   if (!classroom) {
     return <Loading message="Loading classwork..." size="lg" showCard />;
@@ -64,7 +75,8 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
     return <Loading message="Loading assignments..." size="lg" showCard />;
   }
 
-  const isTeacher = classroom.userRole === "instructor" || classroom.userRole === "ta";
+  const isTeacher =
+    classroom.userRole === "instructor" || classroom.userRole === "ta";
   const totalStudents = memberStats?.students || 0;
 
   const handleEditAssignment = (assignmentId: string) => {
@@ -80,7 +92,9 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
   };
 
   // Get the assignment being edited
-  const editingAssignment = assignments?.find(a => a._id === editingAssignmentId);
+  const editingAssignment = assignments?.find(
+    (a) => a._id === editingAssignmentId,
+  );
 
   return (
     <div className="space-y-6">
@@ -91,12 +105,16 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
             Classwork
           </h1>
           <p className="text-base font-base text-gray-600">
-            {isTeacher ? "Manage assignments and track student progress" : "View and submit your assignments"}
+            {isTeacher
+              ? "Manage assignments and track student progress"
+              : "View and submit your assignments"}
           </p>
         </div>
 
         {isTeacher && (
-          <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />
+          <CreateAssignmentModal
+            classroomId={resolvedParams.id as Id<"classrooms">}
+          />
         )}
       </div>
 
@@ -111,7 +129,7 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
               {categories.map((category) => (
                 <button
                   key={category.name}
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() => setSelectedCategory(category.name || "All")}
                   className={`w-full flex items-center justify-between p-3 text-left rounded-lg transition-colors ${
                     selectedCategory === category.name
                       ? "bg-teal-50 text-teal-700 border border-teal-200"
@@ -119,10 +137,15 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <FolderOpen size={16} className={selectedCategory === category.name ? "text-teal-600" : "text-gray-500"} />
-                    <span className="text-sm font-base">
-                      {category.name}
-                    </span>
+                    <FolderOpen
+                      size={16}
+                      className={
+                        selectedCategory === category.name
+                          ? "text-teal-600"
+                          : "text-gray-500"
+                      }
+                    />
+                    <span className="text-sm font-base">{category.name}</span>
                   </div>
                   <span className="text-xs font-base text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                     {category.count}
@@ -139,19 +162,22 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <BookOpen size={48} className="text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-heading text-gray-900 mb-2">
-                {selectedCategory === "All" ? "No assignments yet" : `No ${selectedCategory.toLowerCase()} assignments`}
+                {selectedCategory === "All"
+                  ? "No assignments yet"
+                  : `No ${selectedCategory.toLowerCase()} assignments`}
               </h3>
               <p className="text-base font-base text-gray-600 mb-6">
                 {isTeacher
                   ? selectedCategory === "All"
                     ? "Create your first assignment to get started."
                     : `No assignments in the ${selectedCategory} category yet.`
-                  : "Your teacher will post assignments here."
-                }
+                  : "Your teacher will post assignments here."}
               </p>
               {isTeacher && selectedCategory === "All" && (
                 <div className="flex justify-center">
-                  <CreateAssignmentModal classroomId={resolvedParams.id as Id<"classrooms">} />
+                  <CreateAssignmentModal
+                    classroomId={resolvedParams.id as Id<"classrooms">}
+                  />
                 </div>
               )}
             </div>
@@ -167,11 +193,13 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
                     dueDate: assignment.dueDate || 0,
                     points: assignment.totalPoints,
                     category: assignment.category || "Uncategorized",
-                    status: assignment.isPublished ? (
-                      assignment.totalSubmissions === totalStudents ? "graded" as const : "assigned" as const
-                    ) : "draft" as const,
+                    status: assignment.isPublished
+                      ? assignment.totalSubmissions === totalStudents
+                        ? ("graded" as const)
+                        : ("assigned" as const)
+                      : ("draft" as const),
                     submissionCount: assignment.totalSubmissions || 0,
-                    totalStudents: totalStudents
+                    totalStudents: totalStudents,
                   }}
                   userRole={classroom.userRole}
                   onEdit={handleEditAssignment}
@@ -187,7 +215,6 @@ export default function ClassworkPage({ params }: ClassworkPageProps) {
       {editingAssignment && (
         <EditAssignmentModal
           assignmentId={editingAssignment._id as Id<"assignments">}
-          classroomId={resolvedParams.id as Id<"classrooms">}
           isOpen={!!editingAssignmentId}
           onClose={handleCloseEditModal}
         />

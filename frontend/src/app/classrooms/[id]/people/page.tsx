@@ -9,7 +9,14 @@ import { Loading } from "@/components/ui/loading";
 import { MembersList } from "@/components/classroom/MembersList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Mail, Users, GraduationCap, Shield, UserCheck } from "lucide-react";
+import {
+  UserPlus,
+  Mail,
+  Users,
+  GraduationCap,
+  Shield,
+  UserCheck,
+} from "lucide-react";
 
 interface PeoplePageProps {
   params: Promise<{ id: string }>;
@@ -21,17 +28,23 @@ export default function PeoplePage({ params }: PeoplePageProps) {
 
   const classroom = useQuery(
     api.classrooms.getClassroom,
-    !isAuthenticated ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   const members = useQuery(
     api.members.getClassroomMembers,
-    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated || !classroom
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   const memberStats = useQuery(
     api.members.getMemberStats,
-    !isAuthenticated || !classroom ? "skip" : { classroomId: resolvedParams.id as Id<"classrooms"> }
+    !isAuthenticated || !classroom
+      ? "skip"
+      : { classroomId: resolvedParams.id as Id<"classrooms"> },
   );
 
   if (!classroom) {
@@ -42,20 +55,25 @@ export default function PeoplePage({ params }: PeoplePageProps) {
     return <Loading message="Loading members..." size="lg" showCard />;
   }
 
-  const isTeacher = classroom.userRole === "instructor" || classroom.userRole === "ta";
+  const isTeacher =
+    classroom.userRole === "instructor" || classroom.userRole === "ta";
 
-  const instructors = members.filter(m => m.role === "instructor");
-  const teachingAssistants = members.filter(m => m.role === "ta");
-  const students = members.filter(m => m.role === "student");
+  const instructors = members.filter(
+    (m): m is NonNullable<typeof m> => m !== null && m.role === "instructor",
+  );
+  const teachingAssistants = members.filter(
+    (m): m is NonNullable<typeof m> => m !== null && m.role === "ta",
+  );
+  const students = members.filter(
+    (m): m is NonNullable<typeof m> => m !== null && m.role === "student",
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-heading text-gray-900 mb-1">
-            People
-          </h1>
+          <h1 className="text-2xl font-heading text-gray-900 mb-1">People</h1>
           <p className="text-base font-base text-gray-600">
             Manage classroom members and their roles
           </p>
@@ -85,9 +103,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
           <p className="text-2xl font-heading text-gray-900 mb-1">
             {members.length}
           </p>
-          <p className="text-sm font-base text-gray-600">
-            Total Members
-          </p>
+          <p className="text-sm font-base text-gray-600">Total Members</p>
         </div>
 
         {/* Instructors */}
@@ -98,9 +114,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
           <p className="text-2xl font-heading text-gray-900 mb-1">
             {instructors.length}
           </p>
-          <p className="text-sm font-base text-gray-600">
-            Instructors
-          </p>
+          <p className="text-sm font-base text-gray-600">Instructors</p>
         </div>
 
         {/* Teaching Assistants */}
@@ -111,9 +125,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
           <p className="text-2xl font-heading text-gray-900 mb-1">
             {teachingAssistants.length}
           </p>
-          <p className="text-sm font-base text-gray-600">
-            Teaching Assistants
-          </p>
+          <p className="text-sm font-base text-gray-600">Teaching Assistants</p>
         </div>
 
         {/* Students */}
@@ -124,9 +136,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
           <p className="text-2xl font-heading text-gray-900 mb-1">
             {students.length}
           </p>
-          <p className="text-sm font-base text-gray-600">
-            Students
-          </p>
+          <p className="text-sm font-base text-gray-600">Students</p>
         </div>
       </div>
 
@@ -136,7 +146,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
         {instructors.length > 0 && (
           <MembersList
             title="Instructors"
-            members={instructors}
+            members={instructors as any}
             canManage={isTeacher && classroom.userRole === "instructor"}
             showEmail={isTeacher}
           />
@@ -146,7 +156,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
         {teachingAssistants.length > 0 && (
           <MembersList
             title="Teaching Assistants"
-            members={teachingAssistants}
+            members={teachingAssistants as any}
             canManage={isTeacher && classroom.userRole === "instructor"}
             showEmail={isTeacher}
           />
@@ -155,7 +165,7 @@ export default function PeoplePage({ params }: PeoplePageProps) {
         {/* Students */}
         <MembersList
           title="Students"
-          members={students}
+          members={students as any}
           canManage={isTeacher}
           showEmail={isTeacher}
         />

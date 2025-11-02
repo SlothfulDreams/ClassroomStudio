@@ -19,7 +19,7 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  Send
+  Send,
 } from "lucide-react";
 
 interface EditAssignmentModalProps {
@@ -46,14 +46,14 @@ const ASSIGNMENT_CATEGORIES = [
   "Essay",
   "Presentation",
   "Discussion",
-  "Other"
+  "Other",
 ];
 
 export function EditAssignmentModal({
   assignmentId,
   isOpen,
   onClose,
-  onAssignmentUpdated
+  onAssignmentUpdated,
 }: EditAssignmentModalProps) {
   const [currentStep, setCurrentStep] = useState<Step>("basic");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,17 +69,21 @@ export function EditAssignmentModal({
   const [dueTime, setDueTime] = useState<string>("");
   const [isPublished, setIsPublished] = useState(false);
   const [acceptSubmissions, setAcceptSubmissions] = useState(false);
-  const [solutionFileId, setSolutionFileId] = useState<Id<"fileMetadata"> | undefined>();
+  const [solutionFileId, setSolutionFileId] = useState<
+    Id<"fileMetadata"> | undefined
+  >();
   const [rubricCriteria, setRubricCriteria] = useState<RubricCriteria[]>([]);
 
   // Fetch assignment data
   const assignment = useQuery(
     api.assignments.getAssignment,
-    assignmentId ? { assignmentId } : "skip"
+    assignmentId ? { assignmentId } : "skip",
   );
 
   const updateAssignment = useMutation(api.assignments.updateAssignment);
-  const togglePublication = useMutation(api.assignments.toggleAssignmentPublication);
+  const togglePublication = useMutation(
+    api.assignments.toggleAssignmentPublication,
+  );
   const deleteAssignment = useMutation(api.assignments.deleteAssignment);
 
   // Initialize form when assignment data loads
@@ -108,33 +112,40 @@ export function EditAssignmentModal({
     }
   }, [assignment]);
 
-  const steps: Record<Step, { title: string; description: string; icon: any }> = {
-    basic: {
-      title: "Basic Information",
-      description: "Title, description, and category",
-      icon: FileText
-    },
-    details: {
-      title: "Assignment Details",
-      description: "Instructions and due date",
-      icon: Calendar
-    },
-    solution: {
-      title: "Solution File",
-      description: "Upload teacher solution (optional)",
-      icon: FileText
-    },
-    rubric: {
-      title: "Grading Rubric",
-      description: "Create rubric criteria (optional)",
-      icon: Target
-    }
-  };
+  const steps: Record<Step, { title: string; description: string; icon: any }> =
+    {
+      basic: {
+        title: "Basic Information",
+        description: "Title, description, and category",
+        icon: FileText,
+      },
+      details: {
+        title: "Assignment Details",
+        description: "Instructions and due date",
+        icon: Calendar,
+      },
+      solution: {
+        title: "Solution File",
+        description: "Upload teacher solution (optional)",
+        icon: FileText,
+      },
+      rubric: {
+        title: "Grading Rubric",
+        description: "Create rubric criteria (optional)",
+        icon: Target,
+      },
+    };
 
   const stepOrder: Step[] = ["basic", "details", "solution", "rubric"];
 
   const handleSubmit = async () => {
-    if (!assignmentId || !title.trim() || totalPoints <= 0 || !dueDate || !dueTime) {
+    if (
+      !assignmentId ||
+      !title.trim() ||
+      totalPoints <= 0 ||
+      !dueDate ||
+      !dueTime
+    ) {
       return;
     }
 
@@ -149,7 +160,8 @@ export function EditAssignmentModal({
         totalPoints,
         category: category || undefined,
         solutionFileId: solutionFileId,
-        rubric: rubricCriteria.length > 0 ? { criteria: rubricCriteria } : undefined,
+        rubric:
+          rubricCriteria.length > 0 ? { criteria: rubricCriteria } : undefined,
         isPublished,
         acceptSubmissions,
       });
@@ -170,7 +182,7 @@ export function EditAssignmentModal({
     try {
       await togglePublication({
         assignmentId,
-        isPublished: !isPublished
+        isPublished: !isPublished,
       });
       setIsPublished(!isPublished);
       setAcceptSubmissions(!isPublished); // Auto-enable submissions when publishing
@@ -203,12 +215,19 @@ export function EditAssignmentModal({
   };
 
   const addRubricCriteria = () => {
-    setRubricCriteria([...rubricCriteria, { name: "", description: "", points: 0 }]);
+    setRubricCriteria([
+      ...rubricCriteria,
+      { name: "", description: "", points: 0 },
+    ]);
   };
 
-  const updateRubricCriteria = (index: number, field: keyof RubricCriteria, value: string | number) => {
+  const updateRubricCriteria = (
+    index: number,
+    field: keyof RubricCriteria,
+    value: string | number,
+  ) => {
     const updated = rubricCriteria.map((criteria, i) =>
-      i === index ? { ...criteria, [field]: value } : criteria
+      i === index ? { ...criteria, [field]: value } : criteria,
     );
     setRubricCriteria(updated);
   };
@@ -254,14 +273,15 @@ export function EditAssignmentModal({
 
   if (showDeleteConfirm) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-overlay flex items-center justify-center p-4">
         <Card className="max-w-md">
           <CardContent className="p-6">
             <h3 className="text-lg font-heading text-foreground mb-4">
               Delete Assignment
             </h3>
             <p className="text-base font-base text-foreground opacity-80 mb-6">
-              Are you sure you want to delete "{assignment.title}"? This will also delete all student submissions and cannot be undone.
+              Are you sure you want to delete "{assignment.title}"? This will
+              also delete all student submissions and cannot be undone.
             </p>
             <div className="flex items-center gap-3 justify-end">
               <Button
@@ -290,7 +310,7 @@ export function EditAssignmentModal({
   const StepIcon = steps[currentStep].icon;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-overlay flex items-center justify-center p-4">
       <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <CardContent className="p-8">
           {/* Header */}
@@ -318,11 +338,13 @@ export function EditAssignmentModal({
           </div>
 
           {/* Publication Status Banner */}
-          <div className={`p-4 rounded-base border-2 mb-6 ${
-            isPublished
-              ? "bg-main/10 border-main text-main"
-              : "bg-secondary-background border-border text-foreground opacity-60"
-          }`}>
+          <div
+            className={`p-4 rounded-base border-2 mb-6 ${
+              isPublished
+                ? "bg-main/10 border-main text-main"
+                : "bg-secondary-background border-border text-foreground opacity-60"
+            }`}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {isPublished ? <Eye size={16} /> : <EyeOff size={16} />}
@@ -332,8 +354,7 @@ export function EditAssignmentModal({
                 <span className="text-xs font-base opacity-80">
                   {isPublished
                     ? "Students can see this assignment"
-                    : "Only visible to instructors"
-                  }
+                    : "Only visible to instructors"}
                 </span>
               </div>
               <Button
@@ -362,8 +383,8 @@ export function EditAssignmentModal({
                       isCurrent
                         ? "bg-main border-main text-main-foreground"
                         : isPast
-                        ? "bg-main border-main text-main-foreground"
-                        : "bg-background border-border text-foreground opacity-40"
+                          ? "bg-main border-main text-main-foreground"
+                          : "bg-background border-border text-foreground opacity-40"
                     }`}
                   >
                     <StepIconComponent size={16} />
@@ -440,7 +461,9 @@ export function EditAssignmentModal({
                     <input
                       type="number"
                       value={totalPoints}
-                      onChange={(e) => setTotalPoints(parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        setTotalPoints(parseInt(e.target.value) || 0)
+                      }
                       min="1"
                       max="1000"
                       className="w-full p-3 text-base font-base bg-secondary-background border-2 border-border rounded-base focus:outline-none focus:ring-2 focus:ring-black"
@@ -508,7 +531,9 @@ export function EditAssignmentModal({
                     />
                     <div
                       className={`w-5 h-5 rounded-base border-2 border-border flex items-center justify-center transition-colors ${
-                        acceptSubmissions ? "bg-main text-main-foreground" : "bg-background"
+                        acceptSubmissions
+                          ? "bg-main text-main-foreground"
+                          : "bg-background"
                       }`}
                     >
                       {acceptSubmissions && <Send size={12} />}
@@ -527,21 +552,24 @@ export function EditAssignmentModal({
                   Solution File (Optional)
                 </h4>
                 <p className="text-sm font-base text-foreground opacity-80 mb-4">
-                  Upload a solution file that will be used for AI comparison with student submissions.
+                  Upload a solution file that will be used for AI comparison
+                  with student submissions.
                 </p>
 
                 {!solutionFileId ? (
                   <FileUpload
                     purpose="solution"
                     classroomId={assignment.classroomId}
-                    assignmentId={assignmentId}
+                    assignmentId={assignmentId || undefined}
                     onUploadComplete={handleSolutionUpload}
                     maxSizeMB={50}
                     disabled={isSubmitting}
                   />
                 ) : (
                   <div>
-                    <p className="text-sm font-heading text-foreground mb-2">Solution File:</p>
+                    <p className="text-sm font-heading text-foreground mb-2">
+                      Solution File:
+                    </p>
                     <FileDisplay
                       fileMetadataId={solutionFileId}
                       showDownload={true}
@@ -580,7 +608,9 @@ export function EditAssignmentModal({
                   <div className="text-center py-8 text-foreground opacity-60">
                     <Target size={48} className="mx-auto mb-4 opacity-40" />
                     <p>No rubric criteria added yet.</p>
-                    <p className="text-sm">Add criteria to help with consistent grading.</p>
+                    <p className="text-sm">
+                      Add criteria to help with consistent grading.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -592,20 +622,38 @@ export function EditAssignmentModal({
                               <input
                                 type="text"
                                 value={criteria.name}
-                                onChange={(e) => updateRubricCriteria(index, "name", e.target.value)}
+                                onChange={(e) =>
+                                  updateRubricCriteria(
+                                    index,
+                                    "name",
+                                    e.target.value,
+                                  )
+                                }
                                 placeholder="Criteria name (e.g., 'Content Quality')"
                                 className="w-full p-2 text-sm font-base bg-background border border-border rounded-base focus:outline-none focus:ring-1 focus:ring-black"
                               />
                               <textarea
                                 value={criteria.description}
-                                onChange={(e) => updateRubricCriteria(index, "description", e.target.value)}
+                                onChange={(e) =>
+                                  updateRubricCriteria(
+                                    index,
+                                    "description",
+                                    e.target.value,
+                                  )
+                                }
                                 placeholder="Description of what this criteria evaluates..."
                                 className="w-full min-h-[60px] p-2 text-sm font-base bg-background border border-border rounded-base focus:outline-none focus:ring-1 focus:ring-black resize-none"
                               />
                               <input
                                 type="number"
                                 value={criteria.points}
-                                onChange={(e) => updateRubricCriteria(index, "points", parseInt(e.target.value) || 0)}
+                                onChange={(e) =>
+                                  updateRubricCriteria(
+                                    index,
+                                    "points",
+                                    parseInt(e.target.value) || 0,
+                                  )
+                                }
                                 placeholder="Points"
                                 min="0"
                                 max={totalPoints}

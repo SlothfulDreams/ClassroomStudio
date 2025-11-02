@@ -207,7 +207,7 @@ function JoinClassroomDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg" variant="outline">
+        <Button size="lg" variant="neutral">
           <Users className="mr-2" size={20} />
           Join Classroom
         </Button>
@@ -247,7 +247,9 @@ export default function ClassroomsPage() {
   );
 
   if (isLoading) {
-    return <LoadingPage title="My Classrooms" message="Loading your classrooms..." />;
+    return (
+      <LoadingPage title="My Classrooms" message="Loading your classrooms..." />
+    );
   }
 
   if (!isAuthenticated) {
@@ -300,9 +302,11 @@ export default function ClassroomsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {classrooms.map((classroom) => (
-              <ClassroomCard key={classroom._id} classroom={classroom} />
-            ))}
+            {classrooms
+              .filter((classroom) => classroom !== null)
+              .map((classroom) => (
+                <ClassroomCard key={classroom._id} classroom={classroom} />
+              ))}
           </div>
         )}
       </div>
