@@ -41,11 +41,20 @@ npx convex dashboard     # Open Convex dashboard
 npx convex import        # Import sample data
 ```
 
+### Python Backend (AI Analysis)
+```bash
+cd backend
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload  # Start dev server
+curl http://localhost:8000/health                                # Health check
+curl http://localhost:8000/docs                                  # OpenAPI docs
+```
+
 ## Architecture
 
 ### Tech Stack
 - **Frontend**: Next.js 15.5 (App Router), React 19, TypeScript 5
 - **Backend**: Convex (serverless backend with real-time sync)
+- **AI Backend**: Python FastAPI + Google Gemini 2.0 Flash
 - **Auth**: Convex Auth (@convex-dev/auth)
 - **Styling**: Tailwind CSS 4, Neobrutalism design system
 - **UI Components**: shadcn/ui (Radix UI primitives)
@@ -75,12 +84,26 @@ ClassroomStudio/
 │   │   ├── classrooms.ts           # Classroom queries/mutations
 │   │   ├── assignments.ts          # Assignment operations
 │   │   ├── submissions.ts          # Student submissions
+│   │   ├── aiAnalyses.ts           # AI analysis results (Phase 4)
 │   │   ├── files.ts                # File storage operations
 │   │   ├── members.ts              # Membership management
 │   │   ├── announcements.ts        # Classroom announcements
-│   │   └── permissions.ts          # Role-based access control
+│   │   ├── permissions.ts          # Role-based access control
+│   │   └── http.ts                 # HTTP routes (auth, optional custom endpoints)
 │   └── public/
-└── backend/                        # Python backend (future AI processing)
+└── backend/                        # Python AI analysis backend
+    ├── app/
+    │   ├── main.py                 # FastAPI application
+    │   ├── config.py               # Settings (Gemini API key, Convex URL)
+    │   ├── routers/
+    │   │   └── analysis.py         # /api/analyze-submission endpoint
+    │   ├── services/
+    │   │   ├── gemini_analysis_service.py   # Gemini PDF analysis
+    │   │   ├── pdf_service.py               # PDF download/processing
+    │   │   └── convex_service.py            # Convex mutation/query API client
+    │   └── models/
+    │       └── schemas.py          # Pydantic models (AnalysisRequest/Response)
+    └── pyproject.toml              # uv dependencies
 ```
 
 ### Convex Backend Architecture
@@ -161,6 +184,42 @@ const data = useQuery(
 - Body: `font-base` (500 weight)
 - All text: `text-foreground` (black in light mode)
 
+### Python Backend Architecture (AI Analysis)
+
+**FastAPI Service** (port 8000):
+- Analyzes student PDF submissions using Google Gemini 2.0 Flash
+- Native PDF processing (no text extraction needed)
+- Stores results in Convex via mutation API
+
+**Key Components:**
+1. **API Endpoints** (`routers/analysis.py`):
+   - `POST /api/analyze-submission` - Analyze PDF submission
+   - `POST /api/test-analysis` - Test endpoint with mock data
+   
+2. **Services**:
+   - `gemini_analysis_service.py` - Gemini API client, PDF analysis prompts
+   - `pdf_service.py` - Download PDFs from Convex signed URLs
+   - `convex_service.py` - Call Convex mutations/queries via HTTP API
+
+3. **Integration Pattern**:
+   ```python
+   # Backend calls Convex mutation API
+   await convex_service.mutation("aiAnalyses:createAnalysis", {
+       "submissionId": "...",
+       "weaknesses": [...],
+       "strengths": [...],
+       # ...
+   })
+   ```
+
+**Analysis Flow:**
+1. Frontend triggers: `POST http://localhost:8000/api/analyze-submission`
+2. Backend downloads PDF from Convex storage
+3. Gemini analyzes PDF → extracts weaknesses/strengths/summary
+4. Backend stores results: `aiAnalyses:createAnalysis` mutation
+5. Backend updates status: `submissions:markAsAnalyzed` mutation
+6. Frontend queries: `useQuery(api.aiAnalyses.getAnalysis, { submissionId })`
+
 ### Authentication Flow
 
 1. Convex Auth handles OAuth and email/password
@@ -192,19 +251,47 @@ const data = useQuery(
 - Always use `bg-overlay` class (defined in globals.css)
 - **Never use** `bg-black` or `bg-black/50` - breaks theming
 
+### AI Analysis Patterns
+- **Query AI results**: `useQuery(api.aiAnalyses.getAnalysis, { submissionId })`
+- **Teachers get all**: `useQuery(api.aiAnalyses.getAnalysesByAssignment, { assignmentId })`
+- **Trigger analysis** (from frontend):
+  ```tsx
+  const response = await fetch('http://localhost:8000/api/analyze-submission', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      submission_id: submissionId,
+      student_file_url: fileUrl,
+      solution_file_url: solutionUrl // optional
+    })
+  });
+  ```
+- **Backend calls Convex**: Use mutation API at `https://{deployment}.convex.cloud/api/mutation`
+- **Permission model**: Students see own analyses, teachers see all in classroom
+
 ### Common Issues
 1. **Null handling**: Filter null values before passing arrays to components that expect non-nullable types
 2. **Date handling**: Convex stores dates as Unix timestamps (numbers). Use `date-fns` for formatting
 3. **Assignment due dates**: Can be `undefined` - always check `hasValidDueDate` before using with `new Date()`
 4. **Member types**: API returns `user.name` as `string | undefined`, but components expect `string` - use type assertions when necessary
+5. **AI analysis availability**: Check `submission.status === "analyzed"` before querying `aiAnalyses`
 
 ## Key Files to Reference
 
+### Frontend/Convex
 - `convex/schema.ts` - Complete database schema with all tables and indexes
+- `convex/aiAnalyses.ts` - AI analysis mutations/queries (Phase 4)
+- `convex/permissions.ts` - Role-based access control helpers
 - `frontend/src/app/globals.css` - Design system tokens and theme variables
 - `frontend/src/components/ui/button.tsx` - Valid button variants
-- `convex/permissions.ts` - Role-based access control helpers
 - `frontend/src/app/layout.tsx` - Root layout with providers
+
+### Backend (Python)
+- `backend/app/main.py` - FastAPI application entry point
+- `backend/app/routers/analysis.py` - Analysis API endpoints
+- `backend/app/services/convex_service.py` - Convex mutation/query client
+- `backend/app/services/gemini_analysis_service.py` - Gemini PDF analysis
+- `backend/app/config.py` - Environment configuration (GEMINI_API_KEY, CONVEX_URL)
 
 ## Package Management
 

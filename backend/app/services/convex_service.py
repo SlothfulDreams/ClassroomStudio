@@ -98,7 +98,7 @@ class ConvexService:
     ) -> str:
         """
         Store AI analysis results in Convex DB
-        Creates record in aiAnalyses table
+        Creates record in aiAnalyses table via mutation API
 
         Returns: ID of created analysis record
         """
@@ -131,12 +131,8 @@ class ConvexService:
                 "analyzedAt": int(analysis_data.get("analyzed_at", 0)),
             }
 
-            # Call Convex mutation to create analysis
-            # Note: This assumes we'll create this mutation in Phase 4
-            # For now, we'll prepare the data structure
-
+            # Call Convex mutation API to store analysis
             result = await self.mutation("aiAnalyses:createAnalysis", convex_data)
-
             return result
 
         except Exception as e:
