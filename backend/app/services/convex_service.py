@@ -1,5 +1,5 @@
 import httpx
-from typing import Optional, Any
+from typing import Any
 from app.config import settings
 
 
@@ -9,11 +9,16 @@ class ConvexService:
     Uses Convex HTTP API to query/mutate data
     """
 
-    def __init__(self):
+    base_url: str
+    api_url: str
+
+    def __init__(self) -> None:
         self.base_url = settings.convex_url
         self.api_url = f"{self.base_url}/api"
 
-    async def query(self, function_name: str, args: dict = None) -> Any:
+    async def query(
+        self, function_name: str, args: dict[str, Any] | None = None
+    ) -> Any:
         """
         Call a Convex query function via HTTP
 
@@ -33,7 +38,9 @@ class ConvexService:
 
             return result.get("value")
 
-    async def mutation(self, function_name: str, args: dict = None) -> Any:
+    async def mutation(
+        self, function_name: str, args: dict[str, Any] | None = None
+    ) -> Any:
         """
         Call a Convex mutation function via HTTP
 
@@ -52,7 +59,7 @@ class ConvexService:
 
             return result.get("value")
 
-    async def get_submission_file_url(self, submission_id: str) -> dict:
+    async def get_submission_file_url(self, submission_id: str) -> dict[str, Any]:
         """
         Get file download URL for a submission
         Calls submissions:getSubmissionFileUrl query
@@ -67,7 +74,7 @@ class ConvexService:
         except Exception as e:
             raise Exception(f"Failed to get submission file URL: {str(e)}")
 
-    async def get_assignment_solution_url(self, assignment_id: str) -> Optional[str]:
+    async def get_assignment_solution_url(self, assignment_id: str) -> str | None:
         """
         Get solution file URL for an assignment (if exists)
 
@@ -94,7 +101,7 @@ class ConvexService:
             return None
 
     async def store_analysis_results(
-        self, submission_id: str, analysis_data: dict
+        self, submission_id: str, analysis_data: dict[str, Any]
     ) -> str:
         """
         Store AI analysis results in Convex DB

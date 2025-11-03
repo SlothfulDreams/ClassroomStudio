@@ -8,7 +8,7 @@ class PDFService:
         """Download PDF from URL (Convex signed URL or direct)"""
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(url)
-            response.raise_for_status()
+            _ = response.raise_for_status()
             return response.content
 
 

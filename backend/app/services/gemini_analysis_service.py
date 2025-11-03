@@ -2,14 +2,17 @@ from google import genai
 from google.genai import types
 from app.config import settings
 import json
-from typing import Optional
+from typing import Any
 import io
 
 
 class GeminiAnalysisService:
     """PDF analysis using native Gemini document processing"""
 
-    def __init__(self):
+    client: genai.Client
+    model_name: str
+
+    def __init__(self) -> None:
         self.client = genai.Client(api_key=settings.gemini_api_key)
         self.model_name = "gemini-2.0-flash-exp"
 
@@ -17,9 +20,9 @@ class GeminiAnalysisService:
         self,
         student_pdf_bytes: bytes,
         student_filename: str,
-        solution_pdf_bytes: Optional[bytes] = None,
-        solution_filename: Optional[str] = None,
-    ) -> dict:
+        solution_pdf_bytes: bytes | None = None,
+        solution_filename: str | None = None,
+    ) -> dict[str, Any]:
         """
         Analyze PDF using native Gemini document understanding
 
@@ -57,7 +60,9 @@ class GeminiAnalysisService:
 
         return uploaded
 
-    async def _analyze_without_solution(self, student_file: types.File) -> dict:
+    async def _analyze_without_solution(
+        self, student_file: types.File
+    ) -> dict[str, Any]:
         """Analyze student PDF without solution comparison"""
 
         prompt = """Analyze this student submission PDF. Extract weaknesses and strengths.
@@ -91,7 +96,8 @@ Be extremely concise. Identify 3-5 weaknesses, 2-3 strengths. Focus on critical 
                     role="user",
                     parts=[
                         types.Part.from_uri(
-                            file_uri=student_file.uri, mime_type=student_file.mime_type
+                            file_uri=student_file.uri or "",
+                            mime_type=student_file.mime_type,
                         ),
                         types.Part.from_text(text=prompt),
                     ],
@@ -99,11 +105,11 @@ Be extremely concise. Identify 3-5 weaknesses, 2-3 strengths. Focus on critical 
             ],
         )
 
-        return self._parse_response(response.text)
+        return self._parse_response(response.text or "")
 
     async def _analyze_with_solution(
         self, student_file: types.File, solution_file: types.File
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Analyze student PDF comparing against teacher solution"""
 
         prompt = """Compare student submission vs teacher solution. Identify weaknesses and strengths.
@@ -138,11 +144,12 @@ Be extremely concise. Focus on differences from solution. Identify 3-5 weaknesse
                     parts=[
                         types.Part.from_text(text="STUDENT SUBMISSION:"),
                         types.Part.from_uri(
-                            file_uri=student_file.uri, mime_type=student_file.mime_type
+                            file_uri=student_file.uri or "",
+                            mime_type=student_file.mime_type,
                         ),
                         types.Part.from_text(text="\n\nTEACHER SOLUTION:"),
                         types.Part.from_uri(
-                            file_uri=solution_file.uri,
+                            file_uri=solution_file.uri or "",
                             mime_type=solution_file.mime_type,
                         ),
                         types.Part.from_text(text=f"\n\n{prompt}"),
@@ -151,11 +158,11 @@ Be extremely concise. Focus on differences from solution. Identify 3-5 weaknesse
             ],
         )
 
-        result = self._parse_response(response.text)
+        result = self._parse_response(response.text or "")
         result["comparison_included"] = True
         return result
 
-    def _parse_response(self, response_text: str) -> dict:
+    def _parse_response(self, response_text: str) -> dict[str, Any]:
         """Parse JSON response from Gemini"""
         try:
             # Try direct JSON parse

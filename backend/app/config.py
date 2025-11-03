@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 # Load .env from project root
 project_root = Path(__file__).parent.parent.parent
 env_path = project_root / ".env"
-load_dotenv(dotenv_path=env_path)
+_ = load_dotenv(dotenv_path=env_path)
 
 
 class Settings(BaseSettings):
@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     convex_url: str = os.getenv("CONVEX_URL", "https://shiny-hornet-999.convex.cloud")
 
     class Config:
-        case_sensitive = False
+        case_sensitive: bool = False
 
 
 settings = Settings()

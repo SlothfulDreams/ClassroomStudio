@@ -10,7 +10,6 @@ from app.services.pdf_service import pdf_service
 from app.services.gemini_analysis_service import gemini_analysis_service
 from app.services.convex_service import convex_service
 import time
-from typing import Optional
 
 router = APIRouter()
 
@@ -45,7 +44,7 @@ async def analyze_submission(request: AnalysisRequest):
         student_pdf_bytes = await pdf_service.download_pdf(request.student_file_url)
 
         # Download solution PDF if provided
-        solution_pdf_bytes: Optional[bytes] = None
+        solution_pdf_bytes: bytes | None = None
         if request.solution_file_url:
             try:
                 solution_pdf_bytes = await pdf_service.download_pdf(
@@ -85,7 +84,7 @@ async def analyze_submission(request: AnalysisRequest):
 
         # Store analysis results in Convex (in background, don't block response)
         try:
-            await convex_service.store_analysis_results(
+            _ = await convex_service.store_analysis_results(
                 submission_id=request.submission_id,
                 analysis_data={
                     "strengths": [s.model_dump() for s in strengths],

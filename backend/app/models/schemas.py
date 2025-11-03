@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import Literal
 
 
 class Weakness(BaseModel):
@@ -8,7 +8,7 @@ class Weakness(BaseModel):
     category: str = Field(..., description="Category: conceptual, syntax, logic, etc.")
     description: str = Field(..., description="Brief description (2-10 words)")
     severity: Literal["minor", "moderate", "major", "critical"]
-    location: Optional[str] = Field(None, description="Where in document (optional)")
+    location: str | None = Field(None, description="Where in document (optional)")
     suggestion: str = Field(..., description="How to improve (5-15 words max)")
 
 
@@ -24,7 +24,7 @@ class AnalysisRequest(BaseModel):
 
     submission_id: str = Field(..., description="Submission ID from Convex")
     student_file_url: str = Field(..., description="URL to download student PDF")
-    solution_file_url: Optional[str] = Field(
+    solution_file_url: str | None = Field(
         None, description="URL to teacher solution PDF (optional)"
     )
 
@@ -46,7 +46,7 @@ class AnalysisResponse(BaseModel):
     )
 
     # Metadata
-    overall_score: Optional[int] = Field(
+    overall_score: int | None = Field(
         None, ge=0, le=100, description="AI confidence score 0-100"
     )
     model_used: str = Field(default="gemini-2.0-flash-exp")
@@ -62,5 +62,5 @@ class AnalysisError(BaseModel):
     """Error response"""
 
     error: str
-    detail: Optional[str] = None
-    submission_id: Optional[str] = None
+    detail: str | None = None
+    submission_id: str | None = None
